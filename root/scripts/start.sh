@@ -22,6 +22,46 @@ fi
 
 nohup stalonetray --dockapp-mode simple > /dev/null 2>&1 &
 
+# Start fcitx5 IME inside container.
+# Running IME in-container makes candidate window follow the real caret in WeChat/QQ.
+if [ "${ENABLE_FCITX5:-true}" = "true" ] || [ "${ENABLE_FCITX5:-true}" = "1" ]; then
+    if command -v fcitx5 >/dev/null 2>&1; then
+        mkdir -p /config/.config/fcitx5
+
+        # Seed a sane default profile (English + Pinyin) on first run.
+        if [ ! -f /config/.config/fcitx5/profile ]; then
+            cat > /config/.config/fcitx5/profile <<'EOP'
+[Groups/0]
+Name=Default
+Default Layout=us
+DefaultIM=pinyin
+
+[Groups/0/Items/0]
+Name=keyboard-us
+Layout=
+
+[Groups/0/Items/1]
+Name=pinyin
+Layout=
+
+[GroupOrder]
+0=Default
+EOP
+        fi
+
+        # Optional: make switching predictable (Ctrl+Space by default).
+        if [ ! -f /config/.config/fcitx5/config ]; then
+            cat > /config/.config/fcitx5/config <<'EOC'
+[Hotkey]
+TriggerKeys=CTRL_SPACE
+EOC
+        fi
+
+        # Start/replace daemon
+        nohup fcitx5 -d -r > /dev/null 2>&1 &
+    fi
+fi
+
 # start WeChat application in the background if exists and auto-start enabled
 if [ "$AUTO_START_WECHAT" = "true" ]; then
     if [ -f /usr/bin/wechat ]; then nohup /usr/bin/wechat > /dev/null 2>&1 & fi
@@ -31,7 +71,3 @@ fi
 if [ "$AUTO_START_QQ" = "true" ]; then
     if [ -f /usr/bin/qq ]; then nohup /usr/bin/qq --no-sandbox > /dev/null 2>&1 & fi
 fi
-
-# !deprecated: start window switcher application in the background
-# start window switcher application in the background
-# nohup sleep 2 && python /scripts/window_switcher.py > /dev/null 2>&1 &
