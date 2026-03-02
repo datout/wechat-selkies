@@ -1,0 +1,22 @@
+\
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    STATE_FILE="/config/.config/fcitx5/enabled"
+    mkdir -p "$(dirname "$STATE_FILE")"
+
+    is_running() {
+      pgrep -x fcitx5 >/dev/null 2>&1
+    }
+
+    if is_running; then
+      # Disable container IME -> prefer local IME on host
+      pkill -x fcitx5 >/dev/null 2>&1 || true
+      echo "0" > "$STATE_FILE"
+    else
+      # Enable container IME
+      echo "1" > "$STATE_FILE"
+      nohup fcitx5 -d -r >/dev/null 2>&1 &
+    fi
+
+    exit 0
