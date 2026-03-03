@@ -1,9 +1,14 @@
 /**
  * IME cursor follow helper for Selkies dashboards.
  *
- * This does NOT read the remote app's caret position (not available in browser).
- * It simply keeps Selkies' hidden IME input element near the user's last pointer
- * position so Windows/macOS IME candidate UI appears close to where you clicked.
+ * Problem: Many WebRTC/Canvas remote desktops capture IME composition via a hidden
+ * <input>/<textarea>. Browsers anchor IME candidate/underline to that element's
+ * on-screen position. If the element is kept in a fixed corner, the IME UI does
+ * not appear near the caret.
+ *
+ * This script attempts to keep the hidden IME element near the user's last
+ * pointer position (or accumulated pointer-lock motion) so IME UI appears
+ * "close enough" to where you're typing.
  */
 (() => {
   if (window.__selkiesImeCursorFollowInstalled) return;
@@ -88,27 +93,19 @@
   window.addEventListener("pointermove", updateFromEvent, { passive: true });
   window.addEventListener("mousemove", updateFromEvent, { passive: true });
 
-  window.addEventListener(
-    "touchstart",
-    (e) => {
-      if (e.touches && e.touches[0]) {
-        lastX = clamp(e.touches[0].clientX, 0, window.innerWidth - 1);
-        lastY = clamp(e.touches[0].clientY, 0, window.innerHeight - 1);
-      }
-    },
-    { passive: true }
-  );
+  window.addEventListener("touchstart", (e) => {
+    if (e.touches && e.touches[0]) {
+      lastX = clamp(e.touches[0].clientX, 0, window.innerWidth - 1);
+      lastY = clamp(e.touches[0].clientY, 0, window.innerHeight - 1);
+    }
+  }, { passive: true });
 
-  window.addEventListener(
-    "touchmove",
-    (e) => {
-      if (e.touches && e.touches[0]) {
-        lastX = clamp(e.touches[0].clientX, 0, window.innerWidth - 1);
-        lastY = clamp(e.touches[0].clientY, 0, window.innerHeight - 1);
-      }
-    },
-    { passive: true }
-  );
+  window.addEventListener("touchmove", (e) => {
+    if (e.touches && e.touches[0]) {
+      lastX = clamp(e.touches[0].clientX, 0, window.innerWidth - 1);
+      lastY = clamp(e.touches[0].clientY, 0, window.innerHeight - 1);
+    }
+  }, { passive: true });
 
   window.addEventListener("compositionstart", (e) => align(e.target), true);
   window.addEventListener("compositionupdate", (e) => align(e.target), true);
