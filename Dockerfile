@@ -112,6 +112,7 @@ RUN cp /usr/share/icons/hicolor/128x128/apps/wechat.png /usr/share/selkies/www/i
 
 # add local files
 COPY /root /
+RUN chmod 755 /usr/local/bin/toggle-fcitx5 2>/dev/null || true
 
 # Optional: inject a small helper script into selkies web UI (client-side IME anchor)
 RUN set -eux; \
