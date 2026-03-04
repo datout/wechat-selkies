@@ -1,14 +1,14 @@
 # WeChat Selkies
 
-[![GitHub Stars](https://img.shields.io/github/stars/nickrunning/wechat-selkies?style=flat-square&logo=github&color=yellow)](https://github.com/nickrunning/wechat-selkies/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/nickrunning/wechat-selkies?style=flat-square&logo=github&color=blue)](https://github.com/nickrunning/wechat-selkies/network/members)
-[![GitHub Issues](https://img.shields.io/github/issues/nickrunning/wechat-selkies?style=flat-square&logo=github&color=red)](https://github.com/nickrunning/wechat-selkies/issues)
-[![GitHub License](https://img.shields.io/github/license/nickrunning/wechat-selkies?style=flat-square&color=green)](https://github.com/nickrunning/wechat-selkies/blob/master/LICENSE)
-[![Docker Pulls](https://img.shields.io/docker/pulls/nickrunning/wechat-selkies?style=flat-square&logo=docker&color=blue)](https://hub.docker.com/r/nickrunning/wechat-selkies)
-[![Docker Image Size](https://img.shields.io/docker/image-size/nickrunning/wechat-selkies?style=flat-square&logo=docker&color=orange)](https://hub.docker.com/r/nickrunning/wechat-selkies)
-[![GitHub Release](https://img.shields.io/github/v/release/nickrunning/wechat-selkies?style=flat-square&logo=github&include_prereleases)](https://github.com/nickrunning/wechat-selkies/releases)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/nickrunning/wechat-selkies/docker.yml?style=flat-square&logo=github-actions&label=build)](https://github.com/nickrunning/wechat-selkies/actions)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/nickrunning/wechat-selkies?style=flat-square&logo=github&color=purple)](https://github.com/nickrunning/wechat-selkies/commits)
+[![GitHub Stars](https://img.shields.io/github/stars/datout/wechat-selkies?style=flat-square&logo=github&color=yellow)](https://github.com/datout/wechat-selkies/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/datout/wechat-selkies?style=flat-square&logo=github&color=blue)](https://github.com/datout/wechat-selkies/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/datout/wechat-selkies?style=flat-square&logo=github&color=red)](https://github.com/datout/wechat-selkies/issues)
+[![GitHub License](https://img.shields.io/github/license/datout/wechat-selkies?style=flat-square&color=green)](https://github.com/datout/wechat-selkies/blob/master/LICENSE)
+[![Docker Pulls](https://img.shields.io/docker/pulls/datout/wechat-selkies?style=flat-square&logo=docker&color=blue)](https://hub.docker.com/r/datout/wechat-selkies)
+[![Docker Image Size](https://img.shields.io/docker/image-size/datout/wechat-selkies?style=flat-square&logo=docker&color=orange)](https://hub.docker.com/r/datout/wechat-selkies)
+[![GitHub Release](https://img.shields.io/github/v/release/datout/wechat-selkies?style=flat-square&logo=github&include_prereleases)](https://github.com/datout/wechat-selkies/releases)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/datout/wechat-selkies/docker.yml?style=flat-square&logo=github-actions&label=build)](https://github.com/datout/wechat-selkies/actions)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/datout/wechat-selkies?style=flat-square&logo=github&color=purple)](https://github.com/datout/wechat-selkies/commits)
 
 English | [中文](README.md)
 
@@ -20,7 +20,7 @@ This project packages the official WeChat/QQ Linux client in a Docker container,
 
 ## Upgrade Notes
 
-> If some features are missing after an upgrade, please clear the `openbox` directory in the local mounted directory (e.g., `./config/.config/openbox`).
+> If some features are missing after an upgrade, please clear the `openbox` directory in the local mounted directory (e.g., `./wechat-config/.config/openbox`).
 
 ## Features
 
@@ -53,11 +53,11 @@ This project packages the official WeChat/QQ Linux client in a Docker container,
 1. **Direct deployment using pre-built images**
 GitHub Container Registry image:
 ```bash
-docker run -it -p 3001:3001 -v ./config:/config --device /dev/dri:/dev/dri ghcr.io/nickrunning/wechat-selkies:latest
+docker run -d --name wechat-selkies --restart unless-stopped -p 3001:3001 -v $(pwd)/wechat-config:/config --device /dev/dri:/dev/dri -e TZ=Asia/Shanghai --log-opt max-size=10m --log-opt max-file=3 ghcr.io/datout/wechat-selkies:latest
 ```
 Docker Hub image:
 ```bash
-docker run -it -p 3001:3001 -v ./config:/config --device /dev/dri:/dev/dri nickrunning/wechat-selkies:latest
+docker run -d --name wechat-selkies --restart unless-stopped -p 3001:3001 -v $(pwd)/wechat-config:/config --device /dev/dri:/dev/dri -e TZ=Asia/Shanghai --log-opt max-size=10m --log-opt max-file=3 datout/wechat-selkies:latest
 ```
 
 2. **Access WeChat**
@@ -75,14 +75,14 @@ docker run -it -p 3001:3001 -v ./config:/config --device /dev/dri:/dev/dri nickr
    ```yaml
     services:
       wechat-selkies:
-        image: nickrunning/wechat-selkies:latest    # or ghcr.io/nickrunning/wechat-selkies:latest
+        image: datout/wechat-selkies:latest    # or ghcr.io/datout/wechat-selkies:latest
         container_name: wechat-selkies
         ports:
           - "3000:3000"       # http port
           - "3001:3001"       # https port
         restart: unless-stopped
         volumes:
-          - ./config:/config
+          - ./wechat-config:/config
         devices:
           - /dev/dri:/dev/dri # optional, for hardware acceleration
         environment:
@@ -105,7 +105,7 @@ docker run -it -p 3001:3001 -v ./config:/config --device /dev/dri:/dev/dri nickr
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/nickrunning/wechat-selkies.git
+   git clone https://github.com/datout/wechat-selkies.git
    cd wechat-selkies
    ```
 
@@ -154,9 +154,9 @@ Configure the following environment variables in `docker-compose.yml`:
 
 #### Volume Mounts
 
-- `./config:/config`: WeChat configuration and data persistence directory
+- `./wechat-config:/config`: WeChat configuration and data persistence directory
 
-> **Note:** If the right-click menu lacks `WeChat` related options after an upgrade, please clear the `openbox` directory in the local mounted directory (e.g., `./config/.config/openbox`).
+> **Note:** If the right-click menu lacks `WeChat` related options after an upgrade, please clear the `openbox` directory in the local mounted directory (e.g., `./wechat-config/.config/openbox`).
 
 ## Installing Third-Party Applications (e.g., Telegram)
 
@@ -239,7 +239,7 @@ This project is licensed under **MIT License**. See the [LICENSE](LICENSE) file 
 - **Project License**: MIT License - A permissive open source license
 - **Dependency Note**: This project uses [LinuxServer.io baseimage-selkies](https://github.com/linuxserver/docker-baseimage-selkies) as base image
 - **License Compatibility**: Since this project only uses the base image without modifying its source code, following containerized software licensing practices, it can adopt the MIT license
-- **Open Source**: Complete project source code is publicly available on GitHub: https://github.com/nickrunning/wechat-selkies
+- **Open Source**: Complete project source code is publicly available on GitHub: https://github.com/datout/wechat-selkies
 
 ## Disclaimer and Copyright Notice
 
@@ -277,4 +277,4 @@ This project is licensed under **MIT License**. See the [LICENSE](LICENSE) file 
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=nickrunning/wechat-selkies&type=Date)](https://www.star-history.com/#nickrunning/wechat-selkies&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=datout/wechat-selkies&type=Date)](https://www.star-history.com/#datout/wechat-selkies&Date)

@@ -1,14 +1,14 @@
 # WeChat Selkies
 
-[![GitHub Stars](https://img.shields.io/github/stars/nickrunning/wechat-selkies?style=flat-square&logo=github&color=yellow)](https://github.com/nickrunning/wechat-selkies/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/nickrunning/wechat-selkies?style=flat-square&logo=github&color=blue)](https://github.com/nickrunning/wechat-selkies/network/members)
-[![GitHub Issues](https://img.shields.io/github/issues/nickrunning/wechat-selkies?style=flat-square&logo=github&color=red)](https://github.com/nickrunning/wechat-selkies/issues)
-[![GitHub License](https://img.shields.io/github/license/nickrunning/wechat-selkies?style=flat-square&color=green)](https://github.com/nickrunning/wechat-selkies/blob/master/LICENSE)
-[![Docker Pulls](https://img.shields.io/docker/pulls/nickrunning/wechat-selkies?style=flat-square&logo=docker&color=blue)](https://hub.docker.com/r/nickrunning/wechat-selkies)
-[![Docker Image Size](https://img.shields.io/docker/image-size/nickrunning/wechat-selkies?style=flat-square&logo=docker&color=orange)](https://hub.docker.com/r/nickrunning/wechat-selkies)
-[![GitHub Release](https://img.shields.io/github/v/release/nickrunning/wechat-selkies?style=flat-square&logo=github&include_prereleases)](https://github.com/nickrunning/wechat-selkies/releases)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/nickrunning/wechat-selkies/docker.yml?style=flat-square&logo=github-actions&label=build)](https://github.com/nickrunning/wechat-selkies/actions)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/nickrunning/wechat-selkies?style=flat-square&logo=github&color=purple)](https://github.com/nickrunning/wechat-selkies/commits)
+[![GitHub Stars](https://img.shields.io/github/stars/datout/wechat-selkies?style=flat-square&logo=github&color=yellow)](https://github.com/datout/wechat-selkies/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/datout/wechat-selkies?style=flat-square&logo=github&color=blue)](https://github.com/datout/wechat-selkies/network/members)
+[![GitHub Issues](https://img.shields.io/github/issues/datout/wechat-selkies?style=flat-square&logo=github&color=red)](https://github.com/datout/wechat-selkies/issues)
+[![GitHub License](https://img.shields.io/github/license/datout/wechat-selkies?style=flat-square&color=green)](https://github.com/datout/wechat-selkies/blob/master/LICENSE)
+[![Docker Pulls](https://img.shields.io/docker/pulls/datout/wechat-selkies?style=flat-square&logo=docker&color=blue)](https://hub.docker.com/r/datout/wechat-selkies)
+[![Docker Image Size](https://img.shields.io/docker/image-size/datout/wechat-selkies?style=flat-square&logo=docker&color=orange)](https://hub.docker.com/r/datout/wechat-selkies)
+[![GitHub Release](https://img.shields.io/github/v/release/datout/wechat-selkies?style=flat-square&logo=github&include_prereleases)](https://github.com/datout/wechat-selkies/releases)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/datout/wechat-selkies/docker.yml?style=flat-square&logo=github-actions&label=build)](https://github.com/datout/wechat-selkies/actions)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/datout/wechat-selkies?style=flat-square&logo=github&color=purple)](https://github.com/datout/wechat-selkies/commits)
 
 中文 | [English](README_en.md)
 
@@ -20,7 +20,7 @@
 
 ## 升级注意事项
 
-> 如果升级后部分功能缺失，请先清空本地挂载目录下的openbox目录(如`./config/.config/openbox`)。
+> 如果升级后部分功能缺失，请先清空本地挂载目录下的openbox目录(如`./wechat-config/.config/openbox`)。
 
 ## 功能特性
 
@@ -54,12 +54,12 @@
 
 GitHub Container Registry镜像：
 ```bash
-docker run -it -p 3001:3001 -v ./config:/config --device /dev/dri:/dev/dri ghcr.io/nickrunning/wechat-selkies:latest
+docker run -d --name wechat-selkies --restart unless-stopped -p 3001:3001 -v $(pwd)/wechat-config:/config --device /dev/dri:/dev/dri -e TZ=Asia/Shanghai --log-opt max-size=10m --log-opt max-file=3 ghcr.io/datout/wechat-selkies:latest
 ```
 
 Docker Hub镜像：
 ```bash
-docker run -it -p 3001:3001 -v ./config:/config --device /dev/dri:/dev/dri nickrunning/wechat-selkies:latest
+docker run -d --name wechat-selkies --restart unless-stopped -p 3001:3001 -v $(pwd)/wechat-config:/config --device /dev/dri:/dev/dri -e TZ=Asia/Shanghai --log-opt max-size=10m --log-opt max-file=3 datout/wechat-selkies:latest
 ```
 
 2. **访问微信**
@@ -77,14 +77,14 @@ docker run -it -p 3001:3001 -v ./config:/config --device /dev/dri:/dev/dri nickr
    ```yaml
     services:
       wechat-selkies:
-        image: nickrunning/wechat-selkies:latest    # or ghcr.io/nickrunning/wechat-selkies:latest
+        image: datout/wechat-selkies:latest    # or ghcr.io/datout/wechat-selkies:latest
         container_name: wechat-selkies
         ports:
           - "3000:3000"       # http port
           - "3001:3001"       # https port
         restart: unless-stopped
         volumes:
-          - ./config:/config
+          - ./wechat-config:/config
         devices:
           - /dev/dri:/dev/dri # optional, for hardware acceleration
         environment:
@@ -107,7 +107,7 @@ docker run -it -p 3001:3001 -v ./config:/config --device /dev/dri:/dev/dri nickr
 
 1. **克隆项目**
    ```bash
-   git clone https://github.com/nickrunning/wechat-selkies.git
+   git clone https://github.com/datout/wechat-selkies.git
    cd wechat-selkies
    ```
 
@@ -156,9 +156,9 @@ docker run -it -p 3001:3001 -v ./config:/config --device /dev/dri:/dev/dri nickr
 
 #### 数据卷挂载
 
-- `./config:/config`: 微信配置和数据持久化目录
+- `./wechat-config:/config`: 微信配置和数据持久化目录
 
-> **注意：** 如果升级后右键菜单缺少 `WeChat` 相关选项，请先清空本地挂载目录下的openbox目录(如`./config/.config/openbox`)。
+> **注意：** 如果升级后右键菜单缺少 `WeChat` 相关选项，请先清空本地挂载目录下的openbox目录(如`./wechat-config/.config/openbox`)。
 
 ## 安装第三方应用（如 Telegram）
 
@@ -240,7 +240,7 @@ docker-compose logs -f wechat-selkies
 - **项目许可证**: MIT License - 宽松的开源许可证
 - **依赖项说明**: 本项目使用 [LinuxServer.io baseimage-selkies](https://github.com/linuxserver/docker-baseimage-selkies) 作为基础镜像
 - **许可证兼容性**: 由于本项目仅使用基础镜像而未修改其源码，根据容器化软件的许可证实践，可以采用MIT许可证
-- **源码开放**: 完整项目源代码在 GitHub 上公开：https://github.com/nickrunning/wechat-selkies
+- **源码开放**: 完整项目源代码在 GitHub 上公开：https://github.com/datout/wechat-selkies
 
 ## 免责声明与版权声明
 
@@ -278,4 +278,4 @@ docker-compose logs -f wechat-selkies
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=nickrunning/wechat-selkies&type=Date)](https://www.star-history.com/#nickrunning/wechat-selkies&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=datout/wechat-selkies&type=Date)](https://www.star-history.com/#datout/wechat-selkies&Date)
