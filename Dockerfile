@@ -33,7 +33,7 @@ RUN apt-get update && \
       fcitx5 fcitx5-chinese-addons \
       fcitx5-frontend-gtk2 fcitx5-frontend-gtk3 fcitx5-frontend-gtk4 \
       fcitx5-frontend-qt5 fcitx5-frontend-qt6 \
-      fcitx5-config-qt
+      fcitx5-config-qt sudo
 
 RUN pip install --no-cache-dir python-xlib
 
@@ -112,6 +112,8 @@ RUN cp /usr/share/icons/hicolor/128x128/apps/wechat.png /usr/share/selkies/www/i
 
 # add local files
 COPY /root /
+RUN chmod 755 /usr/local/bin/install-chrome /usr/local/bin/launch-chrome 2>/dev/null || true \
+ && chmod 440 /etc/sudoers.d/010-abc-chrome 2>/dev/null || true
 RUN chmod 755 /usr/local/bin/toggle-fcitx5 2>/dev/null || true
 
 # Optional: inject a small helper script into selkies web UI (client-side IME anchor)

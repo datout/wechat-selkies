@@ -79,3 +79,28 @@ fi
 if [ "$AUTO_START_QQ" = "true" ]; then
     if [ -f /usr/bin/qq ]; then nohup /usr/bin/qq --no-sandbox > /dev/null 2>&1 & fi
 fi
+
+# ===== BEGIN CHROME INSTALLER (on-demand, default not installed) =====
+if [ "${ENABLE_CHROME_INSTALLER:-true}" = "true" ]; then
+  mkdir -p "$HOME/Desktop"
+  if ! command -v google-chrome-stable >/dev/null 2>&1; then
+    if [ ! -f "$HOME/Desktop/Install-Chrome.desktop" ]; then
+      cat > "$HOME/Desktop/Install-Chrome.desktop" <<'EOD'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Install Google Chrome
+Comment=Download and install Google Chrome (amd64 only)
+Exec=/usr/bin/xterm -e sudo /usr/local/bin/install-chrome
+Icon=/usr/share/pixmaps/xterm-color_48x48.xpm
+Terminal=false
+Categories=System;
+StartupNotify=false
+EOD
+      chmod 755 "$HOME/Desktop/Install-Chrome.desktop"
+    fi
+  else
+    rm -f "$HOME/Desktop/Install-Chrome.desktop" 2>/dev/null || true
+  fi
+fi
+# ===== END CHROME INSTALLER =====

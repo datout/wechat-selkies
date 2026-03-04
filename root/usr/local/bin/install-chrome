@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if command -v google-chrome-stable >/dev/null 2>&1; then
+  echo "[OK] Chrome already installed: $(google-chrome-stable --version)"
+  exit 0
+fi
+
+arch="$(dpkg --print-architecture 2>/dev/null || true)"
+if [ "${arch:-}" != "amd64" ]; then
+  echo "[ERR] Google Chrome official .deb only supports amd64. Current arch: ${arch:-unknown}"
+  exit 1
+fi
+
+export DEBIAN_FRONTEND=noninteractive
+
+# cache deb under /config so rebuild container can re-install faster
+mkdir -p /config/cache
+deb="/config/cache/google-chrome-stable_current_amd64.deb"
+
+apt-get update
+apt-get install -y wget ca-certificates
+
+if [ ! -f "$deb" ]; then
+  echo "[INFO] Downloading Chrome deb..."
+  wget -O "$deb" https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+fi
+
+echo "[INFO] Installing Chrome..."
+dpkg -i "$deb" || apt-get -f install -y
+
+# Create launcher entry (menu item) via Desktop .desktop
+desktop_dir="/config/Desktop"
+mkdir -p "$desktop_dir"
+
+cat > "$desktop_dir/Google-Chrome.desktop" <<'EOD'
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Google Chrome
+Comment=Web Browser
+Exec=/usr/local/bin/launch-chrome %U
+Icon=google-chrome
+Terminal=false
+Categories=Network;WebBrowser;
+StartupNotify=true
+EOD
+
+chmod 755 "$desktop_dir/Google-Chrome.desktop"
+chown abc:abc "$desktop_dir/Google-Chrome.desktop" 2>/dev/null || true
+
+# Remove installer button after installed
+rm -f "$desktop_dir/Install-Chrome.desktop" 2>/dev/null || true
+
+# refresh openbox menu
+if id abc >/dev/null 2>&1; then
+  su -s /bin/bash -c "/scripts/refresh-menu.sh || true" abc || true
+fi
+
+echo "[OK] Chrome installed."

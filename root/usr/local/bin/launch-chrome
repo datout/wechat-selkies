@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+unset DBUS_SESSION_BUS_ADDRESS
+exec /usr/bin/google-chrome-stable \
+  --no-sandbox \
+  --disable-gpu \
+  --password-store=basic \
+  --user-data-dir=/config/chrome \
+  "$@"
